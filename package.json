@@ -26,5 +26,6 @@
     "eslint-plugin-react": "^7.31.11",
     "prettier": "^2.7.1",
     "prisma": "^4.6.1"
-  }
+  },
+  "license": "MIT"
 }
