@@ -24,6 +24,16 @@ export const appRouter = router({
       throw err;
     }
   }),
+  getUrl: procedure.input(z.string()).query(async ({ input, ctx }) => {
+    const url = await ctx.prisma.url.findFirst({ where: { slug: input } });
+    if (!url) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Slug not found',
+      });
+    }
+    return url;
+  }),
 });
 
 export type AppRouter = typeof appRouter;
