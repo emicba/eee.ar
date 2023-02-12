@@ -27,9 +27,7 @@ export default function Form() {
         <Input required id="destination" placeholder="https://..." type="url" />
       </div>
 
-      <Button aria-disabled disabled>
-        Create
-      </Button>
+      <Button disabled>Create</Button>
     </form>
   );
 }
