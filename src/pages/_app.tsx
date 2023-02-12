@@ -1,6 +1,7 @@
+import { Toaster } from '@/components/toaster';
 import '@/styles/globals.css';
 import { Inter } from '@next/font/google';
-import type { AppProps } from 'next/app';
+import type { AppType } from 'next/app';
 import Head from 'next/head';
 
 const inter = Inter({
@@ -8,7 +9,7 @@ const inter = Inter({
   subsets: ['latin'],
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: AppType = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
@@ -19,6 +20,9 @@ export default function App({ Component, pageProps }: AppProps) {
       `}</style>
       </Head>
       <Component {...pageProps} />
+      <Toaster />
     </>
   );
-}
+};
+
+export default App;
