@@ -3,6 +3,8 @@ import { trpc } from '@/utils/trpc';
 import * as React from 'react';
 import { Button } from './button';
 import { Input } from './input';
+import { Clipboard } from 'lucide-react';
+import { ToastAction } from './toast';
 
 export default function Form() {
   const { dismiss, toast, toasts } = useToast();
@@ -13,6 +15,33 @@ export default function Form() {
         title: 'Something went wrong',
         description: err.message,
         variant: 'destructive',
+      });
+    },
+    onSuccess: (data) => {
+      const url = `${window.location.href}${data.slug}`;
+      toast({
+        title: 'Successfully created',
+        description: (
+          <>
+            Your URL is{' '}
+            <a
+              className="font-medium text-zinc-900 underline underline-offset-4 dark:text-zinc-50"
+              href={url}
+              rel="noreferrer"
+              target="_blank"
+            >
+              {url}
+            </a>
+          </>
+        ),
+        action: (
+          <ToastAction
+            altText="Copy to clipboard"
+            onClick={() => navigator.clipboard.writeText(url)}
+          >
+            <Clipboard className="h-5 w-5" />
+          </ToastAction>
+        ),
       });
     },
   });
