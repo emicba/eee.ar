@@ -13,6 +13,11 @@
   "dependencies": {
     "@next/font": "13.1.6",
     "@radix-ui/react-toast": "^1.1.2",
+    "@tanstack/react-query": "^4.24.6",
+    "@trpc/client": "^10.11.0",
+    "@trpc/next": "^10.11.0",
+    "@trpc/react-query": "^10.11.0",
+    "@trpc/server": "^10.11.0",
     "@types/node": "18.13.0",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.10",
@@ -24,7 +29,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tailwindcss-animate": "^1.0.5",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "zod": "^3.20.6"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.13",
