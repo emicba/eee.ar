@@ -13,7 +13,10 @@ export default function Home() {
       </Head>
       <main className="mx-auto min-h-screen max-w-sm items-center justify-center p-4">
         <h1 className="my-20 scroll-m-20 text-center text-4xl font-bold tracking-tight lg:text-5xl">
-          Short your links :^)
+          Shorten your links{' '}
+          <span className="whitespace-nowrap" aria-hidden>
+            : ^)
+          </span>
         </h1>
 
         <Form />
