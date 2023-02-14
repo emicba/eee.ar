@@ -1,13 +1,26 @@
+import { useDebounce } from '@/hooks/use-debounce';
 import { useToast } from '@/hooks/use-toast';
 import { trpc } from '@/utils/trpc';
+import { AlertCircle, Clipboard } from 'lucide-react';
 import * as React from 'react';
 import { Button } from './button';
 import { Input } from './input';
-import { Clipboard } from 'lucide-react';
 import { ToastAction } from './toast';
 
 export default function Form() {
+  const [slug, setSlug] = React.useState('');
+  const [destination, setDestination] = React.useState('');
+
   const { dismiss, toast, toasts } = useToast();
+  const debouncedSlug = useDebounce(slug, 350);
+  const checkAvailability = trpc.checkAvailability.useQuery(debouncedSlug, {
+    enabled: Boolean(debouncedSlug),
+    placeholderData: () => ({ isAvailable: true }),
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+    staleTime: 1000 * 60,
+  });
   const createUrl = trpc.createUrl.useMutation({
     onMutate: () => dismiss(),
     onError: (err) => {
@@ -46,9 +59,6 @@ export default function Form() {
     },
   });
 
-  const [slug, setSlug] = React.useState('');
-  const [destination, setDestination] = React.useState('');
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createUrl.mutate({ slug, url: destination });
@@ -62,6 +72,12 @@ export default function Form() {
         </label>
         <Input
           required
+          appendEl={
+            !checkAvailability.data?.isAvailable ? (
+              <AlertCircle aria-hidden className="h-5 w-5 text-red-500" />
+            ) : null
+          }
+          aria-describedby="slug-error"
           autoComplete="off"
           className="[&>input]:pl-0"
           id="slug"
@@ -72,6 +88,11 @@ export default function Form() {
           value={slug}
           onChange={(e) => setSlug(e.target.value)}
         />
+        {!checkAvailability.data?.isAvailable ? (
+          <p className="text-sm text-red-500" id="slug-error">
+            Slug is already in use.
+          </p>
+        ) : null}
       </div>
 
       <div className="grid w-full max-w-sm items-center gap-2">
@@ -88,7 +109,7 @@ export default function Form() {
         />
       </div>
 
-      <Button disabled={toasts.length !== 0}>Create</Button>
+      <Button disabled={toasts.length !== 0 || !checkAvailability.data?.isAvailable}>Create</Button>
     </form>
   );
 }

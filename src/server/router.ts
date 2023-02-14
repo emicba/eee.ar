@@ -34,6 +34,12 @@ export const appRouter = router({
     }
     return url;
   }),
+  checkAvailability: procedure.input(z.string()).query(async ({ input, ctx }) => {
+    const count = await ctx.prisma.url.count({ where: { slug: input } });
+    return {
+      isAvailable: count === 0,
+    };
+  }),
 });
 
 export type AppRouter = typeof appRouter;
