@@ -71,6 +71,7 @@ export default function Form() {
           Slug
         </label>
         <Input
+          autoFocus
           required
           appendEl={
             !checkAvailability.data?.isAvailable ? (
