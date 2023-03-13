@@ -25,6 +25,7 @@ export default function Home() {
           href="https://github.com/emicba/eee.ar"
           rel="noreferrer"
           target="_blank"
+          variant="outline"
         >
           <Github className="h-5 w-5" aria-hidden />
           Star on GitHub
