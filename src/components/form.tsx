@@ -1,11 +1,20 @@
 import { useDebounce } from '@/hooks/use-debounce';
 import { useToast } from '@/hooks/use-toast';
 import { trpc } from '@/utils/trpc';
-import { AlertCircle, Clipboard } from 'lucide-react';
+import { AlertCircle, Clipboard, Shuffle } from 'lucide-react';
 import * as React from 'react';
 import { Button } from './button';
 import { Input } from './input';
 import { ToastAction } from './toast';
+
+// Consider generating the slug server-side, as there's a chance that the
+// generated slug is already taken. Anyway, the checkAvailability query will
+// do it's job.
+function getRandomSlug() {
+  const buf = new Uint8Array(4);
+  crypto.getRandomValues(buf);
+  return buf.reduce((a, b) => a + b.toString(36), '');
+}
 
 export default function Form() {
   const [slug, setSlug] = React.useState('');
@@ -67,9 +76,20 @@ export default function Form() {
   return (
     <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
       <div className="grid w-full max-w-sm items-center gap-2">
-        <label className="text-sm font-medium leading-none" htmlFor="slug">
-          Slug
-        </label>
+        <div className="flex justify-between text-sm font-medium leading-none">
+          <label htmlFor="slug">Slug</label>
+          <button
+            className="flex items-center gap-1 text-gray-500 active:scale-95 aria-disabled:pointer-events-none dark:text-slate-400"
+            type="button"
+            onClick={() => setSlug(getRandomSlug())}
+            aria-label="Generate a random slug"
+            disabled={toasts.length !== 0}
+            aria-disabled={toasts.length !== 0}
+          >
+            <Shuffle className="h-3 w-3" />
+            Randomize
+          </button>
+        </div>
         <Input
           autoFocus
           required
