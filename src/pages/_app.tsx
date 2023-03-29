@@ -1,7 +1,7 @@
 import { Toaster } from '@/components/toaster';
 import '@/styles/globals.css';
 import { trpc } from '@/utils/trpc';
-import { Inter } from '@next/font/google';
+import { Inter } from 'next/font/google';
 import type { AppType } from 'next/app';
 import Head from 'next/head';
 
