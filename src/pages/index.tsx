@@ -10,6 +10,7 @@ export default function Home() {
     <>
       <Head>
         <title>eee.ar</title>
+        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_APP_URL}/api/og`} />
         <meta content="Open-source URL shortener" name="description" />
         <meta content="width=device-width, initial-scale=1" name="viewport" />
       </Head>
