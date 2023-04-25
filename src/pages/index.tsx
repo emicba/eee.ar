@@ -6,13 +6,25 @@ import Head from 'next/head';
 const Form = dynamic(() => import('@/components/form'), { ssr: false });
 
 export default function Home() {
+  const title = 'eee.ar';
+  const description = 'Open-source URL shortener';
+  const image = `${process.env.NEXT_PUBLIC_APP_URL}/api/og`;
+
   return (
     <>
       <Head>
-        <title>eee.ar</title>
-        <meta property="og:image" content={`${process.env.NEXT_PUBLIC_APP_URL}/api/og`} />
-        <meta content="Open-source URL shortener" name="description" />
+        <title>{title}</title>
+        <meta name="description" content={description} />
         <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={image} />
+
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={image} />
       </Head>
       <main className="mx-auto mt-20 flex min-h-screen max-w-sm flex-col gap-10 p-4">
         <h1 className="scroll-m-20 text-center text-4xl font-bold tracking-tight lg:text-5xl">
