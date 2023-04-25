@@ -8,6 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "format": "prettier --write --cache src",
     "format:check": "prettier --check --cache src"
   },
