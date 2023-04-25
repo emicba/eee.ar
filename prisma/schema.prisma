@@ -12,4 +12,6 @@ model Url {
   slug      String   @unique
   url       String   @db.VarChar(2000)
   createdAt DateTime @default(now())
+
+  @@index([slug])
 }
