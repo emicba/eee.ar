@@ -1,4 +1,5 @@
 import { ImageResponse } from '@vercel/og';
+import { NextRequest } from 'next/server';
 
 export const config = {
   runtime: 'edge',
@@ -11,7 +12,8 @@ const interBold = fetch(new URL('../../assets/Inter-Bold.ttf', import.meta.url))
   res.arrayBuffer()
 );
 
-export default async function handler() {
+export default async function handler(request: NextRequest) {
+  const lightTheme = request.nextUrl.searchParams.get('light') === 'true';
   const [interRegularData, interBoldData] = await Promise.all([interRegular, interBold]);
 
   return new ImageResponse(
@@ -25,8 +27,8 @@ export default async function handler() {
           alignItems: 'center',
           justifyContent: 'center',
           fontSize: 32,
-          backgroundColor: 'rgb(24 24 27)',
-          color: 'rgb(255 255 255)',
+          backgroundColor: lightTheme ? '#ffffff' : 'rgb(24 24 27)',
+          color: lightTheme ? 'rgb(24 24 27)' : 'rgb(255 255 255)',
           fontFamily: 'Inter, sans-serif',
         }}
       >
