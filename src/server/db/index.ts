@@ -6,4 +6,4 @@ const connection = connect({
   url: process.env['DATABASE_URL'],
 });
 
-export const db = drizzle(connection, { schema });
+export const db = drizzle(connection, { schema, logger: process.env.NODE_ENV === 'development' });
