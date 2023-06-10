@@ -1,6 +1,8 @@
-import { Prisma } from '@prisma/client';
+import { DatabaseError } from '@planetscale/database';
 import { TRPCError } from '@trpc/server';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { urls } from './db/schema';
 import { procedure, router } from './trpc';
 
 const urlSchema = z.object({
@@ -10,32 +12,38 @@ const urlSchema = z.object({
 
 export const appRouter = router({
   createUrl: procedure.input(urlSchema).mutation(async ({ input, ctx }) => {
-    try {
-      return await ctx.prisma.url.create({ data: input });
-    } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
+    return ctx.db.transaction(async (tx) => {
+      try {
+        await tx.insert(urls).values(input);
+      } catch (err) {
+        // https://dev.mysql.com/doc/mysql-errors/8.0/en/server-error-reference.html#error_er_dup_entry
+        if (err instanceof DatabaseError && /\(errno 1062\) \(sqlstate 23000\)/.test(err.message)) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Slug already in use 🐛',
           });
         }
+        throw err;
       }
-      throw err;
-    }
+      const [url] = await tx.select().from(urls).where(eq(urls.slug, input.slug));
+      return url;
+    });
   }),
   getUrl: procedure.input(z.string()).query(async ({ input, ctx }) => {
-    const url = await ctx.prisma.url.findFirst({ where: { slug: input } });
-    if (!url) {
+    const ret = await ctx.db.select().from(urls).where(eq(urls.slug, input)).limit(1);
+    if (ret.length === 0) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Slug not found',
       });
     }
-    return url;
+    return ret[0];
   }),
   checkAvailability: procedure.input(z.string()).query(async ({ input, ctx }) => {
-    const count = await ctx.prisma.url.count({ where: { slug: input } });
+    const [{ count }] = await ctx.db
+      .select({ count: sql`count(*)`.mapWith(Number) })
+      .from(urls)
+      .where(eq(urls.slug, input));
     return {
       isAvailable: count === 0,
     };
