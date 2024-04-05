@@ -17,7 +17,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       >
         {prependEl ? <div className="flex items-center pl-3 text-gray-400">{prependEl}</div> : null}
         <input
-          className="block w-full border-0 bg-transparent py-2 px-3 outline-none placeholder:text-zinc-400 disabled:cursor-not-allowed disabled:opacity-50"
+          className="block w-full border-0 bg-transparent px-3 py-2 outline-none placeholder:text-zinc-400 disabled:cursor-not-allowed disabled:opacity-50"
           ref={ref}
           {...props}
         />

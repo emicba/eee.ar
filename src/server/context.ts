@@ -1,4 +1,4 @@
-import { prisma } from '@/server/prisma';
+import { db } from '@/server/db';
 import * as trpc from '@trpc/server';
 import * as trpcNext from '@trpc/server/adapters/next';
 
@@ -8,7 +8,7 @@ import * as trpcNext from '@trpc/server/adapters/next';
  */
 export async function createContextInner() {
   return {
-    prisma,
+    db,
   };
 }
 

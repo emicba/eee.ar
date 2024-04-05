@@ -1,7 +1,9 @@
-import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { procedure, router } from './trpc';
+import { urls } from '@/server/db/schema';
+import { count, eq } from 'drizzle-orm';
+import { NeonDbError } from '@neondatabase/serverless';
 
 const urlSchema = z.object({
   slug: z.string().trim().min(1),
@@ -11,10 +13,11 @@ const urlSchema = z.object({
 export const appRouter = router({
   createUrl: procedure.input(urlSchema).mutation(async ({ input, ctx }) => {
     try {
-      return await ctx.prisma.url.create({ data: input });
+      const [ret] = await ctx.db.insert(urls).values(input).returning();
+      return ret;
     } catch (err) {
-      if (err instanceof Prisma.PrismaClientKnownRequestError) {
-        if (err.code === 'P2002') {
+      if (err instanceof NeonDbError) {
+        if (err.code === '23505') {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Slug already in use 🐛',
@@ -25,19 +28,19 @@ export const appRouter = router({
     }
   }),
   getUrl: procedure.input(z.string()).query(async ({ input, ctx }) => {
-    const url = await ctx.prisma.url.findFirst({ where: { slug: input } });
-    if (!url) {
+    const ret = await ctx.db.select().from(urls).where(eq(urls.slug, input)).limit(1);
+    if (ret.length === 0) {
       throw new TRPCError({
         code: 'NOT_FOUND',
         message: 'Slug not found',
       });
     }
-    return url;
+    return ret[0];
   }),
   checkAvailability: procedure.input(z.string()).query(async ({ input, ctx }) => {
-    const count = await ctx.prisma.url.count({ where: { slug: input } });
+    const [ret] = await ctx.db.select({ count: count() }).from(urls).where(eq(urls.slug, input));
     return {
-      isAvailable: count === 0,
+      isAvailable: ret.count === 0,
     };
   }),
 });
